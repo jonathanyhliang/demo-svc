@@ -1,0 +1,13 @@
+apiVersion: rabbitmq/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: demo-svc-rabbitmq
+spec:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 200m
+      memory: 0.5Gi
+    limits:
+      cpu: 200m
+      memory: 0.5Gi

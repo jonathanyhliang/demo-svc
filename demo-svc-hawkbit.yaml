@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hawkbit-fota
+  label: hawkbit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hawkbit
+  template:
+    spec:
+      containers:
+      - name: hawkbitfota
+        image: jonathanyhliang/hawkbit-fota:latest
+        command:
+        - /bin/sh
+        - "-c"
+        - "./hawkbit-fota -f :8080 -b :8081"
+        ports:
+        - containerPort: 8080
+          name: hawkbit-svc-front
+        - containerPort: 8081
+          name: hawkbit-svc-back
+      restartPolicy: OnFailure
+
+---
+kind: Service
+metadata:
+  name: slcan-service
+spec:
+  selector:
+    label: slcan
+  ports:
+  - name: hawkbit-service-front
+    protocol: TCP
+    port: 8088
+    targetPort: hawkbit-svc-front
+  - name: hawkbit-service-back
+    protocol: TCP
+    port: 8081
+    targetPort: hawkbit-svc-back

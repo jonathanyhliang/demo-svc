@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: slcan-svc
+  label: slcan
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: slcan
+  template:
+    spec:
+      containers:
+      - name: slcansvc
+        image: jonathanyhliang/slcan-svc:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: demo-svc-rabbitmq-default-user
+              key: username
+        - name: PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: demo-svc-rabbitmq-default-user
+              key: password
+        command:
+        - /bin/sh
+        - "-c"
+        - "socat pty,link=/dev/vmodem0,waitslave,ignoreeof tcp:host.minikube.internal:80 & ./slcan-svc -p /dev/vmodem0 -u amqp://$USERNAME:$PASSWORD@demo-svc-rabbitmq:5672/"
+        ports:
+        - containerPort: 8080
+          name: slcan-pod-front
+      - name: mcumgrsvc
+        image: jonathanyhliang/mcumgr-svc:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: demo-svc-rabbitmq-default-user
+              key: username
+        - name: PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: demo-svc-rabbitmq-default-user
+              key: password
+        command:
+        - /bin/sh
+        - "-c"
+        - "socat pty,link=/dev/vmodem0.waitslave,ignoreeof tcp:host.minikube.internal:80 & ./mcumgr-svc -p /dev/vmodem0 -http-addr hawkbit-fota-svc:8081 -u amqp://$USERNAME:$PASSWORD@demo-svc-rabbitmq:5672/"
+
+---
+kind: Service
+metadata:
+  name: slcan-service
+spec:
+  selector:
+    label: slcan
+  ports:
+  - name: slcan-service-port
+    protocol: TCP
+    port: 8082
+    targetPort: slcan-svc-front
