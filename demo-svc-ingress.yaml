@@ -9,13 +9,17 @@ spec:
   - host: demo.svc
     http:
       paths:
-        - path: /api(/|$)(.*)
+        - path: /fota(/|$)(.*)
           pathType: Prefix
           backend:
             service:
               name: hawkbit-service
               port:
                 number: 8080
+        - path: /wired(/|$)(.*)
+          pathType: Prefix
+          backend:
+            service:
               name: slcan-service
               port:
                 number: 8082

@@ -30,8 +30,9 @@ kind: Service
 metadata:
   name: hawkbit-service
 spec:
+  type: NodePort
   selector:
-    labels: hawkbit
+    app: hawkbit
   ports:
   - name: hawkbit-service-front
     protocol: TCP

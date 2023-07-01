@@ -51,10 +51,10 @@ spec:
         - /bin/sh
         - "-c"
         - "socat pty,link=/dev/vmodem0.waitslave,ignoreeof tcp:host.minikube.internal:80 \
-           & ./mcumgr-svc -bid slcan-1234 \
-                          -s hawkbit-service:8081 \
-                          -p /dev/vmodem0 \
-                          -u amqp://$USERNAME:$PASSWORD@demo-svc-rabbitmq:5672/"
+           & ./build/cli -bid slcan-1234 \
+                         -s hawkbit-service:8081 \
+                         -p /dev/vmodem0 \
+                         -u amqp://$USERNAME:$PASSWORD@demo-svc-rabbitmq:5672/"
 
 ---
 apiVersion: v1
@@ -62,10 +62,11 @@ kind: Service
 metadata:
   name: slcan-service
 spec:
+  type: NodePort
   selector:
-    label: slcan
+    app: slcan
   ports:
   - name: slcan-service-port
     protocol: TCP
     port: 8082
-    targetPort: slcan-svc-front
+    targetPort: slcan-pod-front
