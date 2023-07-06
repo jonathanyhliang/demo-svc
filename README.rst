@@ -29,4 +29,4 @@ services and components:
   here so that when ``slcan-svc`` has released the serial port and put the ``slcan`` device into firmware
   update mode, ``mcumgr-svc`` is informed to launch the update process.
 
-.. image:: docs/plantuml/diag/demo-svc.png
+.. image:: docs/plantuml/diag/demo-svc.svg
