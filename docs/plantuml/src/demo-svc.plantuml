@@ -1,48 +1,51 @@
-@startuml
+@startuml demo-svc
 nwdiag {
 
   group slcan {
     color = "#FFAAAA";
-    SLCAN-svc
-    SLCAN-socat-client
+    slcan-svc
+    slcan-socat-client
   }
   group mcumgr {
     color = "#FFAAAA";
-    MCUmgr-svc
-    MCUmgr-socat-client
+    mcumgr-svc
+    mcumgr-socat-client
   }
   network host-machine {
     color = "red"
-    Ingress-controller [address = "http://demo.svc                           ", shape = node]
+    ingress-controller [address = "http://demo.svc                           ", shape = node]
+    port-forward [address = "host.minikube.internal:/port                                             "]
   }
-  network http-node {
-    color = "red"
-    Hawkbit-frontend [address = "/fota/hawkbit                        ", shape = node]
-    Hawkbit-backend [address = """, shape = node]
-    SLCAN-svc [address = "/wired/slcan                      "]
-    MCUmgr-svc
-    Ingress-controller
+  network http {
+    color = "palegreen"
+    hawkbit-frontend [address = "/fota/hawkbit                        ", shape = node]
+    hawkbit-backend [address = """, shape = node]
+    slcan-svc [address = "/wired/slcan                      "]
+    mcumgr-svc
+    ingress-controller
+    port-forward
   }
   network amqp {
-    color = "palegreen"
-    SLCAN-svc [address = "Sender ", shape = node]
-    MCUmgr-svc [address = "Receiver ", shape = node]
-    RabbitMQ [address = ":5672            ", shape = node ]
+    slcan-svc [address = "Sender ", shape = node]
+    mcumgr-svc [address = "Receiver ", shape = node]
+    rabbit-mq [shape = node ]
   }
   network tty-socat {
-    SLCAN-svc [address = "/dev/vmodem                        "]
-    MCUmgr-svc [address = "/dev/vmodem                        "]
-    SLCAN-socat-client [, shape = node]
-    MCUmgr-socat-client [, shape = node]
+    slcan-svc [address = "/dev/vmodem                        "]
+    mcumgr-svc [address = "/dev/vmodem                        "]
+    slcan-socat-client [, shape = node]
+    mcumgr-socat-client [, shape = node]
   }
   network tcp-minikube {
-    SLCAN-socat-client
-    MCUmgr-socat-client
+    color = "palegreen"
+    slcan-socat-client
+    mcumgr-socat-client
     socat-server [, shape = node]
   }
   network usb-host-machine {
+    color = "red"
     socat-server
-    SLCAN-dev [address = "/dev/ttyACMx                          ", shape = node]
+    slcan-dev [address = "/dev/ttyACMx                          ", shape = node]
   }
 }
 @enduml
