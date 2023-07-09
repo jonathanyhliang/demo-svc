@@ -6,23 +6,26 @@ Overview
 ``demo-svc`` is a Microservice Architecture implementation which is currently formed of the following
 services and components: 
 
-* `hawkbit-fota <https://github.com/jonathanyhliang/hawkbit-fota>`_
+* `hawkbit-fota`_
   
   ``hawkbit-fota`` service consists of a frontend server which provides RESTful APIs to manage images,
   distributions, and deployments to be deployed to ``hawkbit-fota`` clients. And a backend server which
-  implements `Hawkbit DDI <https://www.eclipse.org/hawkbit/apis/ddi_api/>`_ compliant RESTful APIs
-  so that ``hawkbit-fota`` clients could poll and launch FOTA processes.
+  implements `Hawkbit DDI`_ compliant RESTful APIs so that ``hawkbit-fota`` clients could poll and launch
+  FOTA processes.
 
-* `slcan-svc <https://github.com/jonathanyhliang/slcan-svc>`_
+* `slcan-svc`_
   
-  ``slcan-svc`` Bridging serial-line CAN communication via RESTful APIs
+  ``slcan-svc`` service is capable of bridging serial-line CAN communication via RESTful APIs. The serial-line
+  backend of the service is partially `Serial-Line CAN`_ compliant for interfacing a `slcan`_ end device.
 
-* `mcumgr-svc <https://github.com/jonathanyhliang/mcumgr-svc>`_
+* `mcumgr-svc`_
 
   ``mcumgr-svc`` implements a ``hawkbit-fota`` client as the frontend to retrive FOTA deployments from
-  ``hawkbit-fota`` service backend by polling and launching FOTA processes. The backend of the service
+  ``hawkbit-fota`` service backend by polling and launching FOTA processes by RESTful APIs the ``Hawkbit`` backend
+  offers. The backend of ``mcumgr-svc`` implements ``upload`` and ``reset`` methods of `mcumgr`_ to update the
+  firmware of the connected ``slcan`` devcice.
     
-* `rabbitmq <https://www.rabbitmq.com/kubernetes/operator/quickstart-operator.html>`_
+* `rabbitmq`_
   
   Since both ``slcan-svc`` and ``mcumgr-svc`` deal with the same serial port, an inter-service measure is
   required to make a sequencial transitioning of the interface from one to the other. ``rabbitmq`` is utilised
@@ -32,21 +35,16 @@ services and components:
 .. image:: docs/plantuml/diag/demo-svc.svg
 
 Part of the work to demonstrate this Microservice Architecture is to develop an ``slcan`` device and a
-``hawkbit-fota`` client device to interact with the Microservice. A fork of
-`zephyrproject-rtos/zephyr <https://github.com/jonathanyhliang/zephyr>`_ has been added with an
-`slcan <https://github.com/jonathanyhliang/zephyr/tree/slcan/samples/subsys/canbus/slcan>`_ sample application
-which runs on `ST Nucleo F446RE <https://docs.zephyrproject.org/latest/boards/arm/nucleo_f446re/doc/index.html>`_
-board, and the existing `Hawkbit FOTA client <https://github.com/jonathanyhliang/zephyr/tree/cc32xx-hawkbit-bringup/samples/subsys/mgmt/hawkbit>`_
-sample application has been patched to support `CC3220SF LaunchXL <https://docs.zephyrproject.org/latest/boards/arm/cc3220sf_launchxl/doc/index.html>`_
-WIFI board bring-up.
+``hawkbit-fota`` client device to interact with the Microservice. A fork of `zephyrproject-rtos/zephyr`_ has
+been added with an `slcan`_ sample application which runs on `ST Nucleo F446RE`_ board, and the existing
+`Hawkbit FOTA client`_ sample application has been patched to support `CC3220SF LaunchXL`_ WIFI board bring-up.
 
-Prerequisute
+Prerequisite
 ************
-* Raspberry Pi arm64
-* `minikube arm64 <https://minikube.sigs.k8s.io/docs/start/>`_
+* Raspberry Pi ARM64
+* `minikube ARM64 <https://minikube.sigs.k8s.io/docs/start/>`_
 * socat
-* An `SLCAN device <https://github.com/jonathanyhliang/zephyr/tree/slcan/samples/subsys/canbus/slcan>`_
-
+* An `slcan`_ device
 
 Building and Running
 ********************
@@ -95,3 +93,17 @@ References
 **********
 * `Set up Ingress on Minikube with the NGINX Ingress Controller <https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/>`_
 * `RabbitMQ Cluster Kubernetes Operator Quickstart <https://www.rabbitmq.com/kubernetes/operator/quickstart-operator.html>`_
+
+
+.. _hawkbit-fota: https://github.com/jonathanyhliang/hawkbit-fota
+.. _Hawkbit DDI: https://www.eclipse.org/hawkbit/apis/ddi_api/
+.. _slcan-svc: https://github.com/jonathanyhliang/slcan-svc
+.. _Serial-Line CAN: https://github.com/torvalds/linux/blob/master/drivers/net/can/slcan/slcan-core.c
+.. _slcan: https://github.com/jonathanyhliang/zephyr/tree/slcan/samples/subsys/canbus/slcan
+.. _mcumgr-svc: https://github.com/jonathanyhliang/mcumgr-svc
+.. _rabbitmq: https://www.rabbitmq.com/kubernetes/operator/quickstart-operator.html
+.. _zephyrproject-rtos/zephyr: https://github.com/jonathanyhliang/zephyr
+.. _ST Nucleo F446RE: https://docs.zephyrproject.org/latest/boards/arm/nucleo_f446re/doc/index.html
+.. _Hawkbit FOTA client: https://github.com/jonathanyhliang/zephyr/tree/cc32xx-hawkbit-bringup/samples/subsys/mgmt/hawkbit
+.. _CC3220SF LaunchXL: https://docs.zephyrproject.org/latest/boards/arm/cc3220sf_launchxl/doc/index.html
+.. _mcumgr: https://github.com/apache/mynewt-mcumgr
