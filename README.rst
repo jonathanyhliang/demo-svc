@@ -32,7 +32,9 @@ services and components:
   here so that when ``slcan-svc`` has released the serial port and put the ``slcan`` device into firmware
   update mode, ``mcumgr-svc`` is informed to launch the update process.
 
-.. image:: docs/plantuml/diag/demo-svc.svg
+
+.. image:: docs/plantuml/diag/demo.svg
+
 
 Part of the work to demonstrate this Microservice Architecture is to develop an ``slcan`` device and a
 ``hawkbit-fota`` client device to interact with the Microservice. A fork of `zephyrproject-rtos/zephyr`_ has
