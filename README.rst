@@ -87,12 +87,26 @@ backend port of ``hawkbit-svc`` exposed.
     kubectl apply -f demo-svc-hawkbit.yaml
 
 Create an ``slcan`` deployment. This deploys an ``slcan-svc`` and an ``mcumgr-svc``
+Wait until both ``slcan-svc`` and ``mcumgr-svc`` are in running state
 
 .. code-block:: console
 
     kubectl apply -f demo-svc-slcan.yaml
 
-Wait until both ``slcan-svc`` and ``mcumgr-svc`` are in running state
+Try retriving an ``slcan`` message by:
+
+.. code-block:: console
+
+    curl --resolve "demo.svc:80:$( minikube ip )" \
+          -i http://demo.svc/wired/slcan/123 \
+          -H "Content-Type: application/json" \
+          -X "GET"
+
+API Documentation
+*****************
+`hawkbit-fota`_ and `slacn-svc`_ maintain their API documentation using `Swagger UI`_.
+
+.. image:: docs/swag-hawkbit-fota.PNG
 
 References
 **********
@@ -112,3 +126,4 @@ References
 .. _Hawkbit FOTA client: https://github.com/jonathanyhliang/zephyr/tree/cc32xx-hawkbit-bringup/samples/subsys/mgmt/hawkbit
 .. _CC3220SF LaunchXL: https://docs.zephyrproject.org/latest/boards/arm/cc3220sf_launchxl/doc/index.html
 .. _mcumgr: https://github.com/apache/mynewt-mcumgr
+.. _Swagger UI: https://github.com/swaggo/swag
