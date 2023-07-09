@@ -1,51 +1,63 @@
 @startuml demo-svc
-nwdiag {
+footer Kubernetes Plant-UML
+scale max 1024 width
+skinparam linetype polyline
+skinparam nodesep 10
+skinparam ranksep 10
 
-  group slcan {
-    color = "#FFAAAA";
-    slcan-svc
-    slcan-socat-client
-  }
-  group mcumgr {
-    color = "#FFAAAA";
-    mcumgr-svc
-    mcumgr-socat-client
-  }
-  network host-machine {
-    color = "red"
-    ingress-controller [address = "http://demo.svc                           ", shape = node]
-    port-forward [address = "host.minikube.internal:/port                                             "]
-  }
-  network http {
-    color = "palegreen"
-    hawkbit-frontend [address = "/fota/hawkbit                        ", shape = node]
-    hawkbit-backend [address = """, shape = node]
-    slcan-svc [address = "/wired/slcan                      "]
-    mcumgr-svc
-    ingress-controller
-    port-forward
-  }
-  network amqp {
-    slcan-svc [address = "Sender ", shape = node]
-    mcumgr-svc [address = "Receiver ", shape = node]
-    rabbit-mq [shape = node ]
-  }
-  network tty-socat {
-    slcan-svc [address = "/dev/vmodem                        "]
-    mcumgr-svc [address = "/dev/vmodem                        "]
-    slcan-socat-client [, shape = node]
-    mcumgr-socat-client [, shape = node]
-  }
-  network tcp-minikube {
-    color = "palegreen"
-    slcan-socat-client
-    mcumgr-socat-client
-    socat-server [, shape = node]
-  }
-  network usb-host-machine {
-    color = "red"
-    socat-server
-    slcan-dev [address = "/dev/ttyACMx                          ", shape = node]
-  }
+!define osaPuml https://raw.githubusercontent.com/Crashedmind/PlantUML-opensecurityarchitecture2-icons/master
+!include osaPuml/Common.puml
+!include osaPuml/User/all.puml
+!include osaPuml/Hardware/all.puml
+!include osaPuml/Misc/all.puml
+!include osaPuml/Server/all.puml
+!include osaPuml/Site/all.puml
+
+' Kubernetes
+!define KubernetesPuml https://raw.githubusercontent.com/dcasati/kubernetes-PlantUML/master/dist
+
+!includeurl KubernetesPuml/kubernetes_Context.puml
+!includeurl KubernetesPuml/kubernetes_Simplified.puml
+
+!includeurl KubernetesPuml/OSS/KubernetesApi.puml
+!includeurl KubernetesPuml/OSS/KubernetesIng.puml
+!includeurl KubernetesPuml/OSS/KubernetesPod.puml
+!includeurl KubernetesPuml/OSS/KubernetesSvc.puml
+
+collections "Client Apps" as clientalias
+osa_device_usb(SlcanDev, "SLCAN Device", "ST Nucleo F446RE")
+osa_device_wireless_router(WifiRouter, "WiFi Router", "......")
+osa_device_usb_wifi(HawkbitClient, "Hawkbit Client", "TI CC3220SF")
+
+left to right direction
+
+' Kubernetes Components
+Cluster_Boundary(cluster, "Kubernetes Cluster") {
+    KubernetesApi(KubernetesApi, "Kubernetes API", "")
+    KubernetesIng(ingress, "API Gateway", "")
+
+    Namespace_Boundary(nsDefault, "default") {
+
+        KubernetesSvc(HawkbitSvc, "hawkbit-service", "")
+        KubernetesPod(HawkbitPod, "hawkbit-pod", "")
+
+        KubernetesSvc(SlcanSvc, "slcan-service", "")
+        KubernetesPod(SlcanPod, "slcan-pod", "")
+    }
+
+    Namespace_Boundary(nsRabbitmq, "RabbitMQ") {
+        KubernetesSvc(RabbitmqSvc, "", "")
+        KubernetesPod(RabbitmqPod, "", "")
+    }
 }
+Rel(clientalias, ingress, "http://demo.svc")
+Rel(ingress, HawkbitSvc, "/fota/hawkbit")
+Rel(HawkbitSvc, HawkbitPod, " ")
+Rel(ingress, SlcanSvc, "/wired/slcan")
+Rel(SlcanSvc, SlcanPod, " ")
+Rel(RabbitmqSvc, RabbitmqPod, " ")
+Rel(SlcanPod, RabbitmqSvc, ":5672")
+Rel(SlcanPod, SlcanDev, " ")
+Rel(HawkbitClient, WifiRouter, " ")
+Rel(WifiRouter, HawkbitSvc, " ")
 @enduml

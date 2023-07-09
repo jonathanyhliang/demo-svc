@@ -1,0 +1,35 @@
+@startuml slcan-pod
+nwdiag {
+
+  group slcan {
+    slcan-svc
+    slcan-socat-client
+  }
+  group mcumgr {
+    mcumgr-svc
+    mcumgr-socat-client
+  }
+  network pod-network {
+    color = "palegreen"
+    slcan-svc
+    mcumgr-svc
+  }
+  network tty-socat {
+    slcan-svc [address = "/dev/vmodem                        "]
+    mcumgr-svc [address = "/dev/vmodem                        "]
+    slcan-socat-client [, shape = node]
+    mcumgr-socat-client [, shape = node]
+  }
+  network tcp-VM {
+    color = "palegreen"
+    slcan-socat-client
+    mcumgr-socat-client
+    socat-server [, shape = node]
+  }
+  network usb-host-machine {
+    color = "red"
+    socat-server
+    slcan-dev [address = "/dev/ttyACMx                          ", shape = node]
+  }
+}
+@enduml

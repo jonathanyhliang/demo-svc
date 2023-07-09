@@ -33,7 +33,10 @@ services and components:
   update mode, ``mcumgr-svc`` is informed to launch the update process.
 
 
-.. image:: docs/plantuml/diag/demo.svg
+.. image:: docs/plantuml/diag/demo-svc.svg
+
+.. image:: docs/plantuml/diag/slcan-pod.svg
+
 
 
 Part of the work to demonstrate this Microservice Architecture is to develop an ``slcan`` device and a
