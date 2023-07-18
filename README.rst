@@ -104,7 +104,7 @@ Try retriving an ``slcan`` message by:
 
 API Documentation
 *****************
-`hawkbit-fota`_ and `slacn-svc`_ maintain their API documentation using `Swagger UI`_.
+`hawkbit-fota`_ and `slcan-svc`_ maintain their API documentation using `Swagger UI`_.
 
 .. image:: docs/swag-hawkbit-fota.PNG
 
